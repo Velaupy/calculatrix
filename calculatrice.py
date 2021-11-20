@@ -45,7 +45,6 @@ def math(orgarg : str):
     pr = 0
     arg = orgarg
     if arg and any(char for char in arg if char.isdigit()):
-        arg = arg.replace("|","")
         def removewastefromarg():
             nonlocal arg
             arg = arg.replace("×","*")
