@@ -180,17 +180,5 @@ def math(orgarg : str):
     else:
         return pr
 
-"""
-import random
-
-lst : list = None
-
-while True:
-    lst = list(string.printable * random.randint(1,10))
-    random.shuffle(lst)
-    st = "".join(lst)
-    math(st)
-"""
-
 while ismain:
     math(input("enter math: "))
