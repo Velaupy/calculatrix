@@ -4,8 +4,6 @@ decimal.getcontext().clear_traps()
 
 Deci = decimal.Decimal
 
-ismain = __name__ == "__main__"
-
 numbers = list(string.digits)
 symbols = ["+","-","*","/","%","."]
 
@@ -177,6 +175,7 @@ def math(arg : str):
     print(f"calculated end result: {pr}")
     print()
     print("-" * 100)
+    return pr
 
-while ismain:
+while __name__ == "__main__":
     math(input("enter math: "))
