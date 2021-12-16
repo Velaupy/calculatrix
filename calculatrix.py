@@ -10,51 +10,49 @@ numbers = list(string.digits)
 symbols = ["+","-","*","/","%","."]
 
 filter = {
+    "?" : "*",
+    "?" : "/",
+    ":" : "/",
+    "^" : "**",
     "()" : "",
     ")(" : "",
-    #"//0" : "",
-    #"/0" : "",
-    #"%0" : "",
+    ").(": ".",
+    ")." : ".",
+    ".(" : ".",
 }
 
 for num in numbers:
     filter[")" + num] = num
     filter[num + "("] = num
+    filter["(." + num] = "(0." + num
     for symbol in symbols:
-        if symbol != ".":
-            filter[symbol + "0" + num] = symbol + num
-            filter[symbol + "." + num] = symbol + "0." + num
+        filter[symbol + "." + num] = symbol + "0." + num
 
 for symbol in symbols:
     filter["(" + symbol + ")"] = symbol
     filter[symbol + ")"] = ")"
     if symbol != "-":
         filter["(" + symbol] = "("
-    if symbol == ".":
-        filter[")" + symbol + "("] = symbol
-        filter[")" + symbol] = symbol
-        filter[symbol + "("] = symbol
     for symbol2 in symbols:
         if (symbol == "*" and symbol2 == "*") or (symbol == "/" and symbol2 == "/"):
             continue
         filter[symbol + symbol2] = symbol
         filter[symbol2 + symbol] = symbol2
 
-def math(orgarg : str):
-    orgarg = str(orgarg)
+def math(arg : str):
     pr = 0
-    arg = orgarg
+    arghistory = []
     if arg and any(char for char in arg if char.isdigit()):
         def removewastefromarg():
             nonlocal arg
-            arg = arg.replace("×","*")
-            arg = arg.replace("÷","/")
-            arg = arg.replace(":","/")
-            arg = arg.replace("^","**")
+            for var in filter:
+                while var in arg:
+                    arg = arg.replace(var,filter.get(var))
             arg = "".join([var for var in arg if var in (numbers + symbols + ["(",")"])])
         removewastefromarg()
         lastarg = ""
         while True:
+            arghistory.append(arg)
             #print()
             #print("arg currently: " + arg)
             lastarg = arg
@@ -68,17 +66,20 @@ def math(orgarg : str):
                         removeindex(index)
                     else:
                         break
+            addminus = False
             while arg[0] in symbols:
                 if arg[0] == "." and arg[1].isdigit():
                     arg = "0" + arg
                 for symbol in symbols:
+                    if symbol == "-" and not addminus:
+                        addminus = True
                     arg = arg.removeprefix(symbol)
+            if addminus:
+                arg = "-" + arg
             while arg[-1] in symbols:
                 for symbol in symbols:
                     arg = arg.removesuffix(symbol)
-            for var in filter:
-                while var in arg:
-                    arg = arg.replace(var,filter.get(var))
+            removewastefromarg()
             parenthese_starts = []
             filtered_parentheses_ends = []
             for index,char in enumerate(arg):
@@ -168,17 +169,14 @@ def math(orgarg : str):
             if not nondecifound:
                 break
         pr = str(eval(arg))
-    if ismain:
-        print()
-        print(f"given result: {orgarg}")
-        print()
-        print(f"filtered result: {arg}")
-        print()
-        print(f"calculated end result: {pr}")
-        print()
-        print("-" * 100)
-    else:
-        return pr
+    print()
+    print("history:")
+    for index,arginhistory in enumerate(arghistory):
+        print(f"{index}: {arginhistory}")
+    print()
+    print(f"calculated end result: {pr}")
+    print()
+    print("-" * 100)
 
 while ismain:
     math(input("enter math: "))
