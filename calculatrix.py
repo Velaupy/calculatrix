@@ -68,9 +68,9 @@ def math(arg : str):
             while arg[0] in symbols:
                 if arg[0] == "." and arg[1].isdigit():
                     arg = "0" + arg
+                if arg[0] == "-" and not addminus:
+                    addminus = True
                 for symbol in symbols:
-                    if symbol == "-" and not addminus:
-                        addminus = True
                     arg = arg.removeprefix(symbol)
             if addminus:
                 arg = "-" + arg
